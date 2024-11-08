@@ -1,6 +1,6 @@
 # bun-framework
 
-An experimental React 19 framework with RSC, SSR, server actions, and more.
+An experimental React 19 framework with RSC, SSR, server actions, route handlers, and more.
 
 To run:
 
