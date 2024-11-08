@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "dependencies": {
+    "react": "19.0.0-rc-57fbe3ba37-20240520",
+    "react-dom": "19.0.0-rc-57fbe3ba37-20240520",
+    "@physis/react-server-dom-esm": "^19.0.0-rc-cc0e491-20240519",
+    "react-server-dom-webpack": "19.0.0-rc-57fbe3ba37-20240520",
+    "tailwindcss": "4.0.0-alpha.23"
+  }
+}

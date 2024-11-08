@@ -1,0 +1,20 @@
+{
+  "name": "bun-framework",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.16",
+    "cssnano": "^6.0.1",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.3",
+    "@tailwindcss/postcss": "4.0.0-alpha.23",
+    "hono": "^4.6.3",
+    "react": "19.0.0-rc-57fbe3ba37-20240520",
+    "react-dom": "19.0.0-rc-57fbe3ba37-20240520",
+    "@physis/react-server-dom-esm": "19.0.0-rc-cc0e491-20240519",
+    "react-server-dom-webpack": "19.0.0-rc-57fbe3ba37-20240520"
+  }
+}
