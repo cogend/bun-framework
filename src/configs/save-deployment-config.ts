@@ -6,14 +6,12 @@ export async function saveDeploymentConfig({
   newVersion,
   currentPackageJsonHash,
   deployment,
-  cssFileNames,
   routeHandlers,
 }) {
   const enhancedDeployment = {
     ...deployment,
     packageJsonHash: currentPackageJsonHash,
     version: newVersion,
-    cssFileNames,
     routeHandlers,
   };
 

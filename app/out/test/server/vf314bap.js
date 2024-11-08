@@ -1,0 +1,1 @@
+import{jsxDEV as e}from"react/jsx-dev-runtime";var t=async()=>{return e("div",{className:"bg-blue-100/50 p-8 flex justify-center items-center h-screen",children:e("h1",{className:"text-4xl font-bold",children:"yo yo yo"},void 0,!1,void 0,this)},void 0,!1,void 0,this)},l=t;export{l as default};

@@ -95,12 +95,12 @@ export const getHandler = async (
     ),
   });
 
-  const cssPaths = cssFileNames.map((cssPath) =>
-    join(ABSOLUTE_MODULE_BASE_URL, cssPath)
-  );
+  // const cssPaths = cssFileNames.map((cssPath) =>
+  //   join(ABSOLUTE_MODULE_BASE_URL, cssPath)
+  // );
 
   const stream = htmlStream
-    .pipeThrough(injectCssStyles(cssPaths))
+    // .pipeThrough(injectCssStyles(cssPaths))
     .pipeThrough(injectRSCPayload(s2));
 
   return new Response(stream);

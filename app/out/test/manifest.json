@@ -1,0 +1,31 @@
+{
+  "routes": {
+    "rsc": {
+      "/": {
+        "layouts": [
+          "t3mk334j.js"
+        ],
+        "page": "zsechnvy.js"
+      }
+    },
+    "ssr": {
+      "/": {
+        "layouts": [
+          "k1ckx0nh.js"
+        ],
+        "page": "vf314bap.js"
+      }
+    }
+  },
+  "bootstrapModules": [
+    "jsmm6ev1.js"
+  ],
+  "serverActionIdMap": {},
+  "packageJsonHash": "4c1a9dc63f94da03",
+  "version": 1,
+  "routeHandlers": {
+    "/api/test": {
+      "GET": "s69qzcyd.js"
+    }
+  }
+}

@@ -64,19 +64,16 @@ export async function build({ deploymentId }) {
 
   console.time("build operations");
 
-  const ssrEntrypoints = [
-    ...entrypoints.code,
-    join(process.cwd(), "./src/server/index.ts"),
-  ];
+  const ssrEntrypoints = [...entrypoints.code];
 
   console.time("run-build");
-  const [ssr, client, rsc, css, routes]: any = await Promise.all([
+  const [ssr, client, rsc, routes]: any = await Promise.all([
     buildClient({
       ...buildConfig,
       type: "ssr",
       target: "node",
-      // external: ["react"],
-      entrypoints: ssrEntrypoints,
+      external: ["react"],
+      entrypoints: entrypoints.serverEntryCode,
       outdir: config.paths.ssr.outDir,
       pluginArgs: {
         filesMap,
@@ -111,7 +108,6 @@ export async function build({ deploymentId }) {
         absoluteSrcDir: config.paths.src.absoluteDir,
       },
     }),
-    buildCss(entrypoints.css, config.paths.in.absoluteDir),
     buildRoutes({
       ...buildConfig,
       target: "node",
@@ -139,7 +135,6 @@ export async function build({ deploymentId }) {
 
   console.time("process routes and rename modules");
   const [
-    cssFileNames,
     rscRoutes,
     ssrRoutes,
     clientSourceMap,
@@ -147,10 +142,6 @@ export async function build({ deploymentId }) {
     routeHandlers,
     ssrSourceMap,
   ] = await Promise.all([
-    saveCssFiles({
-      css: css,
-      cogendOutDir: config.paths.client.absoluteDir,
-    }),
     processRoutes(rsc.outputs, config.paths.sourcemap.path),
     processRoutes(ssr.outputs, config.paths.sourcemap.path),
     renameModules(client.outputs, clientModuleIdMap, config.paths.sourcemap),
@@ -189,29 +180,8 @@ export async function build({ deploymentId }) {
       newVersion,
       currentPackageJsonHash,
       deployment,
-      cssFileNames,
       routeHandlers,
     }),
-    (async () => {
-      const mainServerFile = ssrSourceMap.get("src/server/index.ts");
-      const content = await Bun.file(mainServerFile).text();
-
-      const polyfill = `
-      globalThis.process = {
-      ...process,
-      cwd: () => "/",
-    };
-    if (typeof import.meta.url === "undefined") {
-      import.meta.url = "file:///index.js";
-    }
-    `;
-
-      const newContents = polyfill + content;
-
-      const outDir = join(process.cwd(), `./app/out/${deploymentId}`);
-      const outFile = join(outDir, "index.mjs");
-      await Bun.write(outFile, newContents);
-    })(),
   ]);
   console.timeEnd("final operations");
 

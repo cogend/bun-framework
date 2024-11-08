@@ -5,9 +5,9 @@ import { routeHandler } from "@/server/handlers/route.ts";
 import { getHandler } from "@/server/handlers/get.ts";
 import { postHandler } from "@/server/handlers/post.ts";
 
-const workerId = "cogend";
+const deploymentId = "test";
 
-const OUT_DIR = `./app/out/${workerId}`;
+const OUT_DIR = `./app/out/${deploymentId}`;
 const ABSOLUTE_OUT_DIR = join(process.cwd(), OUT_DIR);
 
 const ABSOLUTE_CLIENT_OUT_DIR = join(ABSOLUTE_OUT_DIR, "client");
