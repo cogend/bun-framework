@@ -11,14 +11,10 @@ export function createCreateServerReferencesPlugin({
     name: "create-server-reference",
     setup(build) {
       build.onLoad({ filter: /\.tsx?$/ }, async (args) => {
-        if (!filesMap[args.path]) {
-          return;
-        }
-
-        const { exports, isServerComponent } = filesMap[args.path];
+        const { exports, isServerComponent, isClientComponent } =
+          filesMap[args.path];
 
         if (isServerComponent) {
-          console.log("isServerComponent", args.path);
           const newCode = exports
             .map(
               (exportName) =>
@@ -34,7 +30,7 @@ import {
   createFromReadableStream,
   createServerReference,
   encodeReply,
-} from "@physis/react-server-dom-esm/client.browser";
+} from "react-server-dom-esm/client.browser";
 
 const moduleBaseURL = "/_cogend/";
 

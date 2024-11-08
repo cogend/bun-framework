@@ -20,18 +20,12 @@ import { readdir, readFile, writeFile } from "fs/promises";
 import { join } from "path";
 
 export async function build({ deploymentId }) {
-  console.log("start build, deploymentId: ", deploymentId);
-  console.time("total build time");
-
-  console.time("create build config");
   const config = createBuildConfig(deploymentId);
   const buildConfig = config.build;
-  console.timeEnd("create build config");
 
   // delete out dir
   await rmdir(config.paths.out.absoluteDir, { recursive: true });
 
-  console.time("check last deployment");
   const {
     newDeploymentId,
     newVersion,
@@ -42,17 +36,11 @@ export async function build({ deploymentId }) {
     deploymentId,
     absoluteInputRootDir: config.paths.in.absoluteDir,
   });
-  console.timeEnd("check last deployment");
 
-  console.time("install dependencies");
   await installDependencies(config.paths.in.absoluteDir, packageJsonChanged);
-  console.timeEnd("install dependencies");
 
-  console.time("initial setup");
   const entrypoints = await createEntrypoints(config.paths.src.absoluteDir);
-  console.timeEnd("initial setup");
 
-  console.time("create maps");
   const {
     clientModuleIdMap: initialClientModuleIdMap,
     serverModuleIdMap: initialServerModuleIdMap,
@@ -60,13 +48,7 @@ export async function build({ deploymentId }) {
     serverActionIds: initialServerActionIds,
     deployment,
   } = await createMaps({ entrypoints });
-  console.timeEnd("create maps");
 
-  console.time("build operations");
-
-  const ssrEntrypoints = [...entrypoints.code];
-
-  console.time("run-build");
   const [ssr, client, rsc, routes]: any = await Promise.all([
     buildClient({
       ...buildConfig,
@@ -97,7 +79,7 @@ export async function build({ deploymentId }) {
       type: "rsc",
       conditions: ["react-server"],
       target: "node",
-      entrypoints: entrypoints.entryCode,
+      entrypoints: entrypoints.code,
       outdir: config.paths.rsc.outDir,
       pluginArgs: {
         absoluteInputRootDir: config.paths.in.absoluteDir,
@@ -117,9 +99,6 @@ export async function build({ deploymentId }) {
       outdir: config.paths.handlers.absoluteDir,
     }),
   ]);
-  console.timeEnd("run-build");
-
-  console.timeEnd("build operations");
 
   if (!rsc.success || !ssr.success || !client.success) {
     console.error("build error: ", {
@@ -133,7 +112,6 @@ export async function build({ deploymentId }) {
   const serverModuleIdMap = rsc.serverModuleIdMap;
   const serverActionIds = rsc.serverActionIds;
 
-  console.time("process routes and rename modules");
   const [
     rscRoutes,
     ssrRoutes,
@@ -149,7 +127,6 @@ export async function build({ deploymentId }) {
     processRouteHandlers(routes.outputs, config.paths.sourcemap.path),
     renameModules(ssr.outputs, clientModuleIdMap, config.paths.sourcemap),
   ]);
-  console.timeEnd("process routes and rename modules");
 
   deployment["routes"] = { rsc: rscRoutes, ssr: ssrRoutes };
   deployment["bootstrapModules"] = [
@@ -158,16 +135,13 @@ export async function build({ deploymentId }) {
       .replace(`${config.paths.client.absoluteDir}/`, ""),
   ];
 
-  console.time("process server actions");
   const serverActionIdMap = await processServerActions(
     serverSourceMap,
     serverActionIds,
     config.paths.src.absoluteDir
   );
-  console.timeEnd("process server actions");
   deployment["serverActionIdMap"] = serverActionIdMap;
 
-  console.time("final operations");
   await Promise.all([
     copyAssetFiles({
       assets: entrypoints.assets,
@@ -183,24 +157,6 @@ export async function build({ deploymentId }) {
       routeHandlers,
     }),
   ]);
-  console.timeEnd("final operations");
 
-  const serverDir = config.paths.handlers.absoluteDir;
-  const files = await readdir(serverDir);
-  for (const file of files) {
-    const filePath = join(serverDir, file);
-    const fileName = filePath.split("/").pop();
-    const content = await readFile(filePath, "utf8");
-    const updatedContent = content.replace(
-      /import\.meta\.url/g,
-      `"file://${fileName}"`
-    );
-    await writeFile(filePath, updatedContent);
-  }
-
-  console.time("cleanup output files");
   await cleanupOutputFiles(config.paths.out.absoluteDir);
-  console.timeEnd("cleanup output files");
-
-  console.timeEnd("total build time");
 }

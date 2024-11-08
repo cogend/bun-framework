@@ -7,7 +7,7 @@ export function createBuildConfig(deploymentId) {
     sourcemap: "external" as const,
     naming: {
       entry: "[hash].[ext]",
-      chunk: "[name]-[hash].[ext]",
+      chunk: "[hash].[ext]",
       asset: "[hash].[ext]",
     },
   };

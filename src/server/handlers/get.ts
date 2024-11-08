@@ -79,29 +79,62 @@ export const getHandler = async (
     });
   }
 
+  // const [s1, s2] = rscStream.tee();
+
+  // const data = createFromReadableStream(s1, {
+  //   moduleBaseURL: ABSOLUTE_SERVER_PATH,
+  // });
+
+  // function Root() {
+  //   return use(data);
+  // }
+
+  // const htmlStream = await renderToReadableStream(createElement(Root), {
+  //   bootstrapModules: bootstrapModules.map((module) =>
+  //     join(MODULE_BASE_URL, module)
+  //   ),
+  // });
+
+  // // const cssPaths = cssFileNames.map((cssPath) =>
+  // //   join(ABSOLUTE_MODULE_BASE_URL, cssPath)
+  // // );
+
+  // const stream = htmlStream
+  //   // .pipeThrough(injectCssStyles(cssPaths))
+  //   .pipeThrough(injectRSCPayload(s2));
+
+  // return new Response(stream);
+
   const [s1, s2] = rscStream.tee();
 
+  console.log("get - 3");
   const data = createFromReadableStream(s1, {
-    moduleBaseURL: ABSOLUTE_SERVER_PATH,
+    moduleBaseURL: join(ABSOLUTE_SERVER_PATH, "/"),
   });
+  console.log("get - 4");
 
   function Root() {
     return use(data);
   }
 
-  const htmlStream = await renderToReadableStream(createElement(Root), {
+  console.log("get - 5 - Root:", Root);
+
+  const RootElement = createElement(Root);
+  console.log("get - 6 - RootElement:", RootElement);
+
+  const htmlStream = await renderToReadableStream(RootElement, {
     bootstrapModules: bootstrapModules.map((module) =>
       join(MODULE_BASE_URL, module)
     ),
   });
 
-  // const cssPaths = cssFileNames.map((cssPath) =>
-  //   join(ABSOLUTE_MODULE_BASE_URL, cssPath)
-  // );
+  console.log("get - 7 - htmlStream:", htmlStream);
 
-  const stream = htmlStream
-    // .pipeThrough(injectCssStyles(cssPaths))
-    .pipeThrough(injectRSCPayload(s2));
+  const stream = htmlStream.pipeThrough(injectRSCPayload(s2));
 
-  return new Response(stream);
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/html",
+    },
+  });
 };

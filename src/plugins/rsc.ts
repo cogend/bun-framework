@@ -26,8 +26,6 @@ export function createRscPlugin({
             ""
           );
 
-          console.log("isClientComponent", id, clientModuleIdMap[id]);
-
           const newCode = exports
             .map((exportName) => {
               if (exportName === "default") {
