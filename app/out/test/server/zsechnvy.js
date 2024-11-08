@@ -1,1 +1,0 @@
-import{a as o}from"./__cogend_client-rfd7a0r4.js";import{b as e}from"./__cogend_client-rsf03swf.js";var t=e(o(),1),i=async()=>{return t.jsxDEV("div",{className:"bg-blue-100/50 p-8 flex justify-center items-center h-screen",children:t.jsxDEV("h1",{className:"text-4xl font-bold",children:"yo yo yo"},void 0,!1,void 0,this)},void 0,!1,void 0,this)},h=i;export{h as default};

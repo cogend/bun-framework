@@ -3,12 +3,10 @@ import { join, parse } from "path";
 
 const inDir = "./src/packages/in";
 const outDir = "./src/server/_packages";
-
 async function buildSsrPackages() {
   try {
-    // const rscFile = "react-server-dom-esm-client.ts";
-    const reactFile = "react.ts";
-    await buildPackages([reactFile], "ssr");
+    const rscFile = "react-server-dom-esm-client.ts";
+    await buildPackages([rscFile], "ssr");
   } catch (error) {
     console.error("Error building RSC packages:", error);
     process.exit(1);
@@ -20,9 +18,7 @@ async function buildRscPackages() {
     const files = await readdir(inDir);
     const tsFiles = files.filter(
       (file) =>
-        file.endsWith(".ts") &&
-        file !== "react-server-dom-esm-client.ts" &&
-        file !== "react.ts"
+        file.endsWith(".ts") && file !== "react-server-dom-esm-client.ts"
     );
     await buildPackages(tsFiles, "rsc");
   } catch (error) {
@@ -36,16 +32,14 @@ async function buildPackages(files: string[], type: "rsc" | "ssr") {
     const { name } = parse(file);
     const entrypoint = join(inDir, file);
 
-    console.log(`Building ${file} to ${outDir}/${name}.js, type: ${type}`);
-
     const result = await Bun.build({
       entrypoints: [entrypoint],
       outdir: outDir,
       naming: `${name}.js`,
       minify: true,
       format: "esm",
-      target: "node",
-      // external: type === "ssr" ? ["react"] : [],
+      target: type === "ssr" ? "browser" : "node",
+      external: type === "ssr" ? ["react"] : [],
       conditions: type === "rsc" ? ["react-server"] : [],
     });
 
